@@ -32,3 +32,29 @@ $ docker-compose run web ./manage.py createsuperuser
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+## Деплой на k8s
+
+`Minikube` Должен быть установлен.
+
+В начале необходимо создать файл `.env` в директории `kubernetes` и заполнить его переменными окружения, как указано в пункте `Переменные окружения`.  
+
+Подгружаем переменные в k8s:
+```shell-session
+$ kubectl create configmap my-web-config --from-env-file=./kubernetes/.env
+```
+
+Создаём image проекта:
+```shell-session
+$ minikube image build -t django_app ./backend_main_django/
+```
+
+Производим деплой на k8s:
+```shell-session
+$ kubectl apply -f ./kubernetes/deploy-web.yaml
+```
+
+Получение ссылки на сайт django:
+```shell-session
+$ minikube service my-nodeport-service --url
+```
