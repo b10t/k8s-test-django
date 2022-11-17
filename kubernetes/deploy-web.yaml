@@ -26,13 +26,34 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: my-nodeport-service
+    name: my-service
 spec:
     selector:
         project: my-project
-    type: NodePort
+    type: ClusterIP
     ports:
         - name: http
           port: 80
           targetPort: 80
           protocol: TCP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: my-project-ingress
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+    rules:
+        - host: star-burger.test
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: my-service
+                            port:
+                                number: 80

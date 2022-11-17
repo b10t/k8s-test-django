@@ -44,6 +44,11 @@ $ docker-compose run web ./manage.py createsuperuser
 $ kubectl create configmap my-web-config --from-env-file=./kubernetes/.env
 ```
 
+Установка расширение ingress:
+```shell-session
+$ minikube addons enable ingress
+```
+
 Создаём image проекта:
 ```shell-session
 $ minikube image build -t django_app ./backend_main_django/
@@ -52,9 +57,4 @@ $ minikube image build -t django_app ./backend_main_django/
 Производим деплой на k8s:
 ```shell-session
 $ kubectl apply -f ./kubernetes/deploy-web.yaml
-```
-
-Получение ссылки на сайт django:
-```shell-session
-$ minikube service my-nodeport-service --url
 ```
