@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: migrate
+    labels:
+        app: migrate
+spec:
+    containers:
+        - name: django-migrate
+          image: django_app:latest
+          imagePullPolicy: IfNotPresent
+          command: ["python"]
+          args: ["manage.py", "migrate", "--noinput"]
+          envFrom:
+              - configMapRef:
+                    name: my-web-config
+    restartPolicy: Never
